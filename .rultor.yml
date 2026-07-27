@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 ---
 docker:
-  image: yegor256/rultor-image:latest
+  image: maxonfjvipon/rultor-image-kotlin:latest
 merge:
   script: |-
     ./gradlew build --stacktrace
