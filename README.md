@@ -1,5 +1,7 @@
 # xslint-jetbrains
 
+[![DevOps By Rultor.com](https://www.rultor.com/b/xslint/xslint-jetbrains)](https://www.rultor.com/p/xslint/xslint-jetbrains)
+
 [![build](https://github.com/xslint/xslint-jetbrains/actions/workflows/build.yml/badge.svg)](https://github.com/xslint/xslint-jetbrains/actions/workflows/build.yml)
 [![verify](https://github.com/xslint/xslint-jetbrains/actions/workflows/verify.yml/badge.svg)](https://github.com/xslint/xslint-jetbrains/actions/workflows/verify.yml)
 [![PDD status](http://www.0pdd.com/svg?name=xslint/xslint-jetbrains)](http://www.0pdd.com/p?name=xslint/xslint-jetbrains)
