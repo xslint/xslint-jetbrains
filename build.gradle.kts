@@ -67,9 +67,24 @@ detekt {
 
 kover {
     reports {
+        filters {
+            excludes {
+                // Platform glue — instantiable only inside a running IDE, so
+                // it's exercised by the Plugin Verifier, not by unit tests.
+                classes(
+                    "com.xslint.jetbrains.XslintLanguageServerFactory",
+                    "com.xslint.jetbrains.XslintLanguageServer",
+                )
+            }
+        }
         total {
             xml {
                 onCheck = true
+            }
+        }
+        verify {
+            rule {
+                minBound(100)
             }
         }
     }
