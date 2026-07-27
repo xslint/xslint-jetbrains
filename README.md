@@ -1,6 +1,8 @@
 # xslint-jetbrains
 
 [![build](https://github.com/xslint/xslint-jetbrains/actions/workflows/build.yml/badge.svg)](https://github.com/xslint/xslint-jetbrains/actions/workflows/build.yml)
+[![verify](https://github.com/xslint/xslint-jetbrains/actions/workflows/verify.yml/badge.svg)](https://github.com/xslint/xslint-jetbrains/actions/workflows/verify.yml)
+[![PDD status](http://www.0pdd.com/svg?name=xslint/xslint-jetbrains)](http://www.0pdd.com/p?name=xslint/xslint-jetbrains)
 [![Hits-of-Code](https://hitsofcode.com/github/xslint/xslint-jetbrains)](https://hitsofcode.com/view/github/xslint/xslint-jetbrains)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/xslint/xslint-jetbrains/blob/master/LICENSE.txt)
 
