@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version "2.1.20"
@@ -58,10 +57,6 @@ intellijPlatform {
 
 kotlin {
     jvmToolchain(21)
-    compilerOptions {
-        apiVersion = KotlinVersion.KOTLIN_1_9
-        languageVersion = KotlinVersion.KOTLIN_1_9
-    }
 }
 
 detekt {
