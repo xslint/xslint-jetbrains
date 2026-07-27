@@ -5,6 +5,8 @@
 [![build](https://github.com/xslint/xslint-jetbrains/actions/workflows/build.yml/badge.svg)](https://github.com/xslint/xslint-jetbrains/actions/workflows/build.yml)
 [![verify](https://github.com/xslint/xslint-jetbrains/actions/workflows/verify.yml/badge.svg)](https://github.com/xslint/xslint-jetbrains/actions/workflows/verify.yml)
 [![codecov](https://codecov.io/gh/xslint/xslint-jetbrains/branch/master/graph/badge.svg)](https://codecov.io/gh/xslint/xslint-jetbrains)
+[![Marketplace](https://img.shields.io/jetbrains/plugin/v/33167?label=Marketplace)](https://plugins.jetbrains.com/plugin/33167)
+[![Downloads](https://img.shields.io/jetbrains/plugin/d/33167)](https://plugins.jetbrains.com/plugin/33167)
 [![PDD status](http://www.0pdd.com/svg?name=xslint/xslint-jetbrains)](http://www.0pdd.com/p?name=xslint/xslint-jetbrains)
 [![Hits-of-Code](https://hitsofcode.com/github/xslint/xslint-jetbrains)](https://hitsofcode.com/view/github/xslint/xslint-jetbrains)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/xslint/xslint-jetbrains/blob/master/LICENSE.txt)
