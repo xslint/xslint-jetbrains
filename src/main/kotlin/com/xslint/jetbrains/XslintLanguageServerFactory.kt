@@ -6,7 +6,7 @@
 package com.xslint.jetbrains
 
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.ide.plugins.PluginManagerCore
+import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
 import com.redhat.devtools.lsp4ij.LanguageServerFactory
@@ -49,7 +49,7 @@ class XslintLanguageServer : OSProcessStreamConnectionProvider() {
     }
 
     private fun serverScript(): Path {
-        val plugin = PluginManagerCore.getPlugin(PluginId.getId(PLUGIN_ID))
+        val plugin = PluginManager.getInstance().findEnabledPlugin(PluginId.getId(PLUGIN_ID))
             ?: error("cannot locate the $PLUGIN_ID plugin installation directory")
         return XslintServer.script(plugin.pluginPath)
     }
