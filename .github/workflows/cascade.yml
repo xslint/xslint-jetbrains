@@ -1,0 +1,75 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 Max Trunnikov
+# SPDX-License-Identifier: MIT
+---
+name: cascade
+'on':
+  repository_dispatch:
+    types:
+      - xslint-lsp-released
+permissions:
+  contents: write
+concurrency:
+  group: cascade-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  cascade:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.DISPATCH_TOKEN }}
+          fetch-depth: 0
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Bump the bundled xslint-lsp to the released version
+        id: bump
+        env:
+          NEW: ${{ github.event.client_payload.version }}
+        run: |
+          current="$(grep -oP '^xslintLspVersion = \K[0-9.]+' gradle.properties)"
+          if [ "${current}" = "${NEW}" ]; then
+            echo "changed=false" >> "${GITHUB_OUTPUT}"
+            echo "gradle.properties already bundles ${NEW}; nothing to do"
+            exit 0
+          fi
+          echo "waiting for xslint-lsp@${NEW} to propagate to npm"
+          for _ in $(seq 1 30); do
+            test -n "$(npm view "xslint-lsp@${NEW}" version 2>/dev/null)" && break
+            sleep 10
+          done
+          sed -E -i "s/^xslintLspVersion = .*/xslintLspVersion = ${NEW}/" gradle.properties
+          echo "changed=true" >> "${GITHUB_OUTPUT}"
+      - name: Validate the plugin builds against the new server
+        if: steps.bump.outputs.changed == 'true'
+        run: ./gradlew buildPlugin --stacktrace
+      - name: Compute this plugin's next patch version
+        id: next
+        if: steps.bump.outputs.changed == 'true'
+        run: |
+          git fetch --tags --force
+          latest="$(git tag --list '[0-9]*.[0-9]*.[0-9]*' --sort=version:refname | tail -1)"
+          if [ -z "${latest}" ]; then
+            next="0.0.1"
+          else
+            next="$(echo "${latest}" | awk -F. '{printf "%d.%d.%d", $1, $2, $3 + 1}')"
+          fi
+          echo "version=${next}" >> "${GITHUB_OUTPUT}"
+      - name: Commit the bump and tag the release
+        if: steps.bump.outputs.changed == 'true'
+        env:
+          NEW: ${{ github.event.client_payload.version }}
+          NEXT: ${{ steps.next.outputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add gradle.properties
+          git commit -m "chore: bump bundled xslint-lsp to ${NEW}"
+          git push origin HEAD:master
+          git tag "${NEXT}"
+          git push origin "${NEXT}"

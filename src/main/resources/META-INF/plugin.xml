@@ -1,0 +1,26 @@
+<!--
+  SPDX-FileCopyrightText: Copyright (c) 2026 Max Trunnikov
+  SPDX-License-Identifier: MIT
+-->
+<idea-plugin>
+    <id>com.xslint.jetbrains</id>
+    <name>xslint for XSL/XSLT</name>
+    <vendor email="mtrunnikov@zerocracy.com" url="https://github.com/xslint">xslint</vendor>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.redhat.devtools.lsp4ij</depends>
+
+    <extensions defaultExtensionNs="com.redhat.devtools.lsp4ij">
+        <server id="xslint"
+                name="xslint Language Server"
+                factoryClass="com.xslint.jetbrains.XslintLanguageServerFactory">
+            <description><![CDATA[
+                Linting and diagnostics for XSL/XSLT stylesheets via the xslint
+                language server.
+            ]]></description>
+        </server>
+        <fileNamePatternMapping patterns="*.xsl;*.xslt"
+                                serverId="xslint"
+                                languageId="xml"/>
+    </extensions>
+</idea-plugin>

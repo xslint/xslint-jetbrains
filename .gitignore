@@ -1,0 +1,10 @@
+.gradle/
+build/
+.kotlin/
+.intellijPlatform/
+*.iml
+.idea/
+
+# The xslint-lsp server, fetched into the plugin at build time
+server/
+node_modules/

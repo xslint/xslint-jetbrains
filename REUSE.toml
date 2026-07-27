@@ -1,0 +1,23 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 Max Trunnikov
+# SPDX-License-Identifier: MIT
+
+version = 1
+[[annotations]]
+path = [
+    "**.md",
+    "**.png",
+    "**.svg",
+    "**.properties",
+    "gradle/wrapper/gradle-wrapper.jar",
+    "gradlew",
+    "gradlew.bat",
+    "**/.gitignore",
+    ".gitattributes",
+    ".editorconfig",
+    ".markdownlint.json",
+    "config/detekt/detekt.yml",
+    "LICENSE.txt",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "Copyright (c) 2026 Max Trunnikov"
+SPDX-License-Identifier = "MIT"
