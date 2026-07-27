@@ -1,7 +1,6 @@
 # xslint-jetbrains
 
 [![build](https://github.com/xslint/xslint-jetbrains/actions/workflows/build.yml/badge.svg)](https://github.com/xslint/xslint-jetbrains/actions/workflows/build.yml)
-[![codecov](https://codecov.io/gh/xslint/xslint-jetbrains/branch/master/graph/badge.svg)](https://codecov.io/gh/xslint/xslint-jetbrains)
 [![Hits-of-Code](https://hitsofcode.com/github/xslint/xslint-jetbrains)](https://hitsofcode.com/view/github/xslint/xslint-jetbrains)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/xslint/xslint-jetbrains/blob/master/LICENSE.txt)
 
@@ -45,7 +44,6 @@ reuse the same engine.
 ./gradlew buildPlugin      # build the distributable .zip (build/distributions)
 ./gradlew runIde           # launch a sandbox IDE with the plugin loaded
 ./gradlew test             # unit tests
-./gradlew koverXmlReport   # coverage report (build/reports/kover)
 ./gradlew detekt           # Kotlin static analysis
 ./gradlew verifyPlugin     # the JetBrains Plugin Verifier
 ```

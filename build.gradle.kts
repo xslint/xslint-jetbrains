@@ -7,7 +7,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 plugins {
     id("org.jetbrains.kotlin.jvm") version "2.1.20"
     id("org.jetbrains.intellij.platform") version "2.18.1"
-    id("org.jetbrains.kotlinx.kover") version "0.9.1"
     id("io.gitlab.arturbosch.detekt") version "1.23.7"
 }
 
@@ -73,14 +72,15 @@ detekt {
 // Fetch the xslint-lsp Node server and bundle it into the plugin distribution,
 // so the runtime finds it at <pluginPath>/xslint-lsp/node_modules/xslint-lsp.
 val xslintLspDir = layout.buildDirectory.dir("xslint-lsp")
+val npm = if (System.getProperty("os.name").startsWith("Windows", true)) "npm.cmd" else "npm"
 
-val installXslintLsp by tasks.registering(Exec::class) {
+val installXslintLsp = tasks.register<Exec>("installXslintLsp") {
     val out = xslintLspDir.get().asFile
     val server = providers.gradleProperty("xslintLspVersion").get()
     outputs.dir(out)
     doFirst { out.mkdirs() }
     commandLine(
-        "npm", "install", "--no-audit", "--no-fund",
+        npm, "install", "--no-audit", "--no-fund",
         "--prefix", out.absolutePath, "xslint-lsp@$server",
     )
 }
