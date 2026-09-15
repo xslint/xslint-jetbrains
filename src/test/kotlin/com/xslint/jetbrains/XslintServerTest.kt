@@ -23,4 +23,15 @@ class XslintServerTest {
             ),
         )
     }
+
+    @Test
+    fun findsThePluginDirectoryAboveItsOwnJar() {
+        assertThat(
+            "plugin directory does not resolve above the jar holding it",
+            XslintServer.plugin(
+                Path.of("/opt/ides/261/plugins/xslint-jetbrains/lib/xslint-jetbrains-0.0.7.jar"),
+            ),
+            equalTo(Path.of("/opt/ides/261/plugins/xslint-jetbrains")),
+        )
+    }
 }

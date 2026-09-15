@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask.FailureLevel
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version "2.4.20"
@@ -50,6 +51,13 @@ intellijPlatform {
         token = providers.environmentVariable("PUBLISH_TOKEN")
     }
     pluginVerification {
+        // Internal API carries no compatibility promise and bars Marketplace
+        // approval, so a call into one fails the build rather than the release.
+        failureLevel = listOf(
+            FailureLevel.COMPATIBILITY_PROBLEMS,
+            FailureLevel.INVALID_PLUGIN,
+            FailureLevel.INTERNAL_API_USAGES,
+        )
         ides {
             recommended()
         }
