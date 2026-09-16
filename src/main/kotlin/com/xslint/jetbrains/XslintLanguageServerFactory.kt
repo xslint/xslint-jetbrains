@@ -6,24 +6,29 @@
 package com.xslint.jetbrains
 
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.ide.plugins.PluginManager
-import com.intellij.openapi.extensions.PluginId
+import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.project.Project
 import com.redhat.devtools.lsp4ij.LanguageServerFactory
 import com.redhat.devtools.lsp4ij.server.OSProcessStreamConnectionProvider
 import com.redhat.devtools.lsp4ij.server.StreamConnectionProvider
 import java.nio.file.Path
 
-private const val PLUGIN_ID = "com.xslint.jetbrains"
-
 /**
- * Where the xslint-lsp server sits inside the plugin, relative to its own
- * installation directory. Bundled there by the Gradle installXslintLsp task.
+ * Where the xslint-lsp server sits, relative to the plugin directory the
+ * Gradle installXslintLsp task bundles it into, and where that directory
+ * sits relative to the jar a class of ours is loaded from.
  */
 object XslintServer {
     private const val RELATIVE = "xslint-lsp/node_modules/xslint-lsp/src/server.js"
 
     fun script(pluginPath: Path): Path = pluginPath.resolve(RELATIVE)
+
+    fun plugin(jar: Path): Path = jar.parent.parent
+
+    fun jar(owner: Class<*>): Path = PathManager.getJarForClass(owner)
+        ?: error("cannot locate the jar holding ${owner.name}")
+
+    fun script(owner: Class<*>): Path = script(plugin(jar(owner)))
 }
 
 /**
@@ -40,17 +45,11 @@ class XslintLanguageServerFactory : LanguageServerFactory {
  */
 class XslintLanguageServer : OSProcessStreamConnectionProvider() {
     init {
-        val server = serverScript()
+        val server = XslintServer.script(javaClass)
         super.setCommandLine(
             GeneralCommandLine("node", server.toString(), "--stdio")
                 .withWorkDirectory(server.parent.toString())
                 .withParentEnvironmentType(GeneralCommandLine.ParentEnvironmentType.CONSOLE),
         )
-    }
-
-    private fun serverScript(): Path {
-        val plugin = PluginManager.getInstance().findEnabledPlugin(PluginId.getId(PLUGIN_ID))
-            ?: error("cannot locate the $PLUGIN_ID plugin installation directory")
-        return XslintServer.script(plugin.pluginPath)
     }
 }

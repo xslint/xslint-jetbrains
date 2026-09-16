@@ -1,7 +1,10 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 Max Trunnikov
 // SPDX-License-Identifier: MIT
 
+import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.intellij.platform.gradle.models.ProductRelease
+import org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask.FailureLevel
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version "2.4.20"
@@ -50,8 +53,25 @@ intellijPlatform {
         token = providers.environmentVariable("PUBLISH_TOKEN")
     }
     pluginVerification {
+        // Internal API carries no compatibility promise and bars Marketplace
+        // approval, so a call into one fails the build rather than the release.
+        failureLevel = listOf(
+            FailureLevel.COMPATIBILITY_PROBLEMS,
+            FailureLevel.INVALID_PLUGIN,
+            FailureLevel.INTERNAL_API_USAGES,
+        )
         ides {
             recommended()
+            // recommended() resolves Community, whose releases stop at 2025.3,
+            // while untilBuild is unset and so claims every build after it.
+            // An API carries no internal marker forever - findEnabledPlugin
+            // gained one after 252 - so the newest Ultimate release joins
+            // them, which is what the Marketplace verifies against. Released
+            // only: an EAP moves weekly and would redden this on churn.
+            latest {
+                types = listOf(IntelliJPlatformType.IntellijIdeaUltimate)
+                channels = listOf(ProductRelease.Channel.RELEASE)
+            }
         }
     }
 }
@@ -69,8 +89,10 @@ kover {
     reports {
         filters {
             excludes {
-                // Platform glue — instantiable only inside a running IDE, so
-                // it's exercised by the Plugin Verifier, not by unit tests.
+                // Platform glue: instantiable only inside a running IDE.
+                // Nothing runs these — the Plugin Verifier reads bytecode and
+                // executes none of it — so keep them thin and put anything
+                // worth asserting in XslintServer, which is measured.
                 classes(
                     "com.xslint.jetbrains.XslintLanguageServerFactory",
                     "com.xslint.jetbrains.XslintLanguageServer",
