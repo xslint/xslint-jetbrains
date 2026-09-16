@@ -47,25 +47,25 @@ class XslintServerTest {
 
     @Test
     fun findsTheJarItsOwnClassIsLoadedFrom() {
-        val jar = folder.newFolder("plugins", "xslint-jetbrains", "lib")
-            .toPath()
-            .resolve("xslint-jetbrains-0.0.7.jar")
-        val entry = "com/xslint/jetbrains/XslintServer.class"
-        JarOutputStream(Files.newOutputStream(jar)).use { out ->
-            out.putNextEntry(JarEntry(entry))
-            out.write(checkNotNull(XslintServer.javaClass.classLoader.getResourceAsStream(entry)).readBytes())
-            out.closeEntry()
-        }
         assertThat(
             "jar of a class loaded by the platform loader does not resolve",
-            XslintServer.jar(
-                UrlClassLoader.build()
-                    .files(listOf(jar))
-                    .parent(ClassLoader.getPlatformClassLoader())
-                    .get()
-                    .loadClass(XslintServer.javaClass.name),
+            XslintServer.jar(bundled()),
+            equalTo(
+                folder.root.toPath()
+                    .resolve("plugins/xslint-jetbrains/lib/xslint-jetbrains-0.0.7.jar"),
             ),
-            equalTo(jar),
+        )
+    }
+
+    @Test
+    fun resolvesTheServerScriptFromTheClassThatAsks() {
+        assertThat(
+            "server script does not resolve from the class asking for it",
+            XslintServer.script(bundled()),
+            equalTo(
+                folder.root.toPath()
+                    .resolve("plugins/xslint-jetbrains/xslint-lsp/node_modules/xslint-lsp/src/server.js"),
+            ),
         )
     }
 
@@ -78,5 +78,22 @@ class XslintServerTest {
             }.message,
             equalTo("cannot locate the jar holding java.lang.String"),
         )
+    }
+
+    private fun bundled(): Class<*> {
+        val jar = folder.newFolder("plugins", "xslint-jetbrains", "lib")
+            .toPath()
+            .resolve("xslint-jetbrains-0.0.7.jar")
+        val entry = "com/xslint/jetbrains/XslintServer.class"
+        JarOutputStream(Files.newOutputStream(jar)).use { out ->
+            out.putNextEntry(JarEntry(entry))
+            out.write(checkNotNull(XslintServer.javaClass.classLoader.getResourceAsStream(entry)).readBytes())
+            out.closeEntry()
+        }
+        return UrlClassLoader.build()
+            .files(listOf(jar))
+            .parent(ClassLoader.getPlatformClassLoader())
+            .get()
+            .loadClass(XslintServer.javaClass.name)
     }
 }

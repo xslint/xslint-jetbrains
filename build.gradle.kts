@@ -1,7 +1,9 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 Max Trunnikov
 // SPDX-License-Identifier: MIT
 
+import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.intellij.platform.gradle.models.ProductRelease
 import org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask.FailureLevel
 
 plugins {
@@ -60,6 +62,16 @@ intellijPlatform {
         )
         ides {
             recommended()
+            // recommended() resolves Community, whose releases stop at 2025.3,
+            // while untilBuild is unset and so claims every build after it.
+            // An API carries no internal marker forever - findEnabledPlugin
+            // gained one after 252 - so the newest Ultimate release joins
+            // them, which is what the Marketplace verifies against. Released
+            // only: an EAP moves weekly and would redden this on churn.
+            latest {
+                types = listOf(IntelliJPlatformType.IntellijIdeaUltimate)
+                channels = listOf(ProductRelease.Channel.RELEASE)
+            }
         }
     }
 }

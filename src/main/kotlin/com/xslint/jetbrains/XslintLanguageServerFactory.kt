@@ -27,6 +27,8 @@ object XslintServer {
 
     fun jar(owner: Class<*>): Path = PathManager.getJarForClass(owner)
         ?: error("cannot locate the jar holding ${owner.name}")
+
+    fun script(owner: Class<*>): Path = script(plugin(jar(owner)))
 }
 
 /**
@@ -43,14 +45,11 @@ class XslintLanguageServerFactory : LanguageServerFactory {
  */
 class XslintLanguageServer : OSProcessStreamConnectionProvider() {
     init {
-        val server = serverScript()
+        val server = XslintServer.script(javaClass)
         super.setCommandLine(
             GeneralCommandLine("node", server.toString(), "--stdio")
                 .withWorkDirectory(server.parent.toString())
                 .withParentEnvironmentType(GeneralCommandLine.ParentEnvironmentType.CONSOLE),
         )
     }
-
-    private fun serverScript(): Path =
-        XslintServer.script(XslintServer.plugin(XslintServer.jar(javaClass)))
 }
