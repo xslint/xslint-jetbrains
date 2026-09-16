@@ -77,8 +77,10 @@ kover {
     reports {
         filters {
             excludes {
-                // Platform glue — instantiable only inside a running IDE, so
-                // it's exercised by the Plugin Verifier, not by unit tests.
+                // Platform glue: instantiable only inside a running IDE.
+                // Nothing runs these — the Plugin Verifier reads bytecode and
+                // executes none of it — so keep them thin and put anything
+                // worth asserting in XslintServer, which is measured.
                 classes(
                     "com.xslint.jetbrains.XslintLanguageServerFactory",
                     "com.xslint.jetbrains.XslintLanguageServer",

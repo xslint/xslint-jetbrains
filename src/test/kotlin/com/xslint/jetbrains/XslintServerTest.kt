@@ -5,12 +5,21 @@
 
 package com.xslint.jetbrains
 
+import com.intellij.util.lang.UrlClassLoader
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+import java.nio.file.Files
 import java.nio.file.Path
+import java.util.jar.JarEntry
+import java.util.jar.JarOutputStream
 
 class XslintServerTest {
+    @get:Rule
+    val folder = TemporaryFolder()
+
     @Test
     fun resolvesServerScriptUnderThePluginDirectory() {
         assertThat(
@@ -32,6 +41,30 @@ class XslintServerTest {
                 Path.of("/opt/ides/261/plugins/xslint-jetbrains/lib/xslint-jetbrains-0.0.7.jar"),
             ),
             equalTo(Path.of("/opt/ides/261/plugins/xslint-jetbrains")),
+        )
+    }
+
+    @Test
+    fun findsTheJarItsOwnClassIsLoadedFrom() {
+        val jar = folder.newFolder("plugins", "xslint-jetbrains", "lib")
+            .toPath()
+            .resolve("xslint-jetbrains-0.0.7.jar")
+        val entry = "com/xslint/jetbrains/XslintServer.class"
+        JarOutputStream(Files.newOutputStream(jar)).use { out ->
+            out.putNextEntry(JarEntry(entry))
+            out.write(checkNotNull(XslintServer.javaClass.classLoader.getResourceAsStream(entry)).readBytes())
+            out.closeEntry()
+        }
+        assertThat(
+            "jar of a class loaded by the platform loader does not resolve",
+            XslintServer.jar(
+                UrlClassLoader.build()
+                    .files(listOf(jar))
+                    .parent(ClassLoader.getPlatformClassLoader())
+                    .get()
+                    .loadClass(XslintServer.javaClass.name),
+            ),
+            equalTo(jar),
         )
     }
 }
