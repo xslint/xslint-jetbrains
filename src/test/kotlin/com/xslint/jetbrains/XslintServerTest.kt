@@ -8,6 +8,7 @@ package com.xslint.jetbrains
 import com.intellij.util.lang.UrlClassLoader
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Assert.assertThrows
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -65,6 +66,17 @@ class XslintServerTest {
                     .loadClass(XslintServer.javaClass.name),
             ),
             equalTo(jar),
+        )
+    }
+
+    @Test
+    fun refusesAClassTheRuntimeImageHolds() {
+        assertThat(
+            "a class standing behind no jar is refused without being named",
+            assertThrows(IllegalStateException::class.java) {
+                XslintServer.jar(String::class.java)
+            }.message,
+            equalTo("cannot locate the jar holding java.lang.String"),
         )
     }
 }
