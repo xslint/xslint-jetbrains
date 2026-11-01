@@ -3,11 +3,13 @@
 ---
 docker:
   image: maxonfjvipon/rultor-image-kotlin:latest
+# Rultor's container has 8 GB. A separate Kotlin daemon would take the same
+# -Xmx4g as the Gradle daemon and run it out of memory, so compile in-process.
 merge:
   script: |-
-    ./gradlew build --stacktrace
+    ./gradlew build --stacktrace -Pkotlin.compiler.execution.strategy=in-process
 release:
   pre: false
   script: |-
     [[ "${tag}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || exit -1
-    ./gradlew build --stacktrace
+    ./gradlew build --stacktrace -Pkotlin.compiler.execution.strategy=in-process
